@@ -50,9 +50,12 @@ console.log(`Running ${chalk.magenta("AudioWarp")}, a tool to warp your ` +
   spinner.stop();
   spinner.succeed("Booted up");
 
-  process.on("SIGINT", () => {
+  function terminate() {
     console.log(chalk.red("Shutting down!"));
     client.destroy();
     process.exit();
-  });
+  }
+
+  process.on("SIGINT", terminate);
+  process.on("SIGHUP", terminate);
 })();

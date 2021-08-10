@@ -24,7 +24,7 @@ export default async function selectAudioSettings(
       type: "list",
       name: "channelAmount",
       message: "Select how to listen to your device.",
-      choices: ["mono", "stereo"]
+      choices: ["stereo", "mono"]
     },
     {
       type: "number",
