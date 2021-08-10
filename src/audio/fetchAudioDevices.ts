@@ -6,7 +6,7 @@ export default function fetchAudioDevices(): Promise<string[]> {
       " -list_devices true -f dshow -i dummy";
     exec(command, (error, stdout, stderr) => {
       const noEnumerate =
-        "Could not enumerate audio only devices (or none found)."
+        "Could not enumerate audio only devices (or none found).";
       if (stderr.includes(noEnumerate)) {
         return reject(new Error(noEnumerate));
       }

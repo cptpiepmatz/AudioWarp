@@ -1,7 +1,6 @@
 // This file is used to setup the app in the packaged .exe
 import {join} from "path";
-import {mkdirSync, readdirSync, readFileSync, writeFileSync} from "fs";
-import {dirname} from "path";
+import {mkdirSync, readFileSync, writeFileSync} from "fs";
 
 const snapshotPath = join(__dirname, "../lib");
 const snapshotFfmpeg = join(snapshotPath, "ffmpeg.exe");

@@ -8,5 +8,5 @@ export default function createClient(): Client {
       Intents.FLAGS.GUILD_MESSAGES,
       Intents.FLAGS.GUILD_INTEGRATIONS
     ]
-  })
+  });
 }

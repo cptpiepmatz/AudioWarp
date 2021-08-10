@@ -1,26 +1,58 @@
 import fetchAudioDevices from "./audio/fetchAudioDevices";
 import selectAudioSettings from "./audio/selectAudioSettings";
-import createAudioStream from "./audio/createAudioStream";
 import createClient from "./discord/createClient";
 import readToken from "./discord/readToken";
 import createRadioPlayer from "./voice/createAudioPlayer";
 import deployInteractionHandler from "./discord/deployInteractionHandler";
 import setCommands from "./discord/setCommands";
+import ora from "ora";
+import chalk from "chalk";
 
-(async function() {
-  console.log("Fetching audio devices");
-  const settings = await selectAudioSettings(await fetchAudioDevices());
+const spinner = ora();
+spinner.color = "magenta";
+spinner.spinner = "dots";
+
+console.log(`Running ${chalk.magenta("AudioWarp")}, a tool to warp your ` +
+  `music input to ${chalk.blue("Discord")}.`);
+
+(async function () {
+  spinner.start("Fetching audio devices...");
+  const devices = await fetchAudioDevices();
+  spinner.succeed("Fetched audio devices");
+
+  const settings = await selectAudioSettings(devices);
+
+  spinner.start("Creating client...");
   const client = createClient();
-  console.log("Created client");
+  spinner.succeed("Created Discord client");
+
+  spinner.start("Reading token...");
   const token = readToken();
-  console.log("Read token");
+  spinner.succeed("Read token");
+
+  spinner.start("Logging in...");
   await client.login(token);
-  console.log("Logged in");
+  spinner.succeed("Logged in");
+
+  spinner.start("Creating radio player...");
   const player = createRadioPlayer(settings);
-  console.log("Created player");
   player.startStreaming();
+  spinner.succeed("Created radio player");
+
+  spinner.start("Registering commands...");
   await setCommands(client);
-  console.log("Registered commands");
+  spinner.succeed("Registered commands");
+
+  spinner.start("Deploying interaction handlers...");
   deployInteractionHandler(client, player);
-  console.log("done");
+  spinner.succeed("Deployed interaction handlers");
+
+  spinner.stop();
+  spinner.succeed("Booted up");
+
+  process.on("SIGINT", () => {
+    console.log(chalk.red("Shutting down!"));
+    client.destroy();
+    process.exit();
+  });
 })();
