@@ -37,14 +37,12 @@
   "pkg": {
     "assets": [
       "lib/ffmpeg.exe",
-      ".token",
-      "node_modules/@discordjs/opus/**/*",
-      "node_modules/sodium/**/*"
+      ".token"
     ],
     "outputPath": "dist",
     "targets": [
       "node16-win-x64"
     ],
-    "compress": true
+    "compress": "GZip"
   }
 }
