@@ -1,6 +1,6 @@
 {
   "name": "audio-warp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "src/app.ts",
   "bin": "out/pkg.js",
