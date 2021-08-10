@@ -1,12 +1,14 @@
 import {prompt} from "inquirer";
 
+export interface AudioSettings {
+  device: string;
+  channelAmount: 1 | 2 | number;
+  sampleRate: number;
+}
+
 export default async function selectAudioSettings(
   audioDevices: string[]
-): Promise<{
-  device: string,
-  channelAmount: number,
-  sampleRate: number
-}> {
+): Promise<AudioSettings> {
   const answers: {
     device: string,
     channelAmount: "mono" | "stereo",
@@ -28,7 +30,7 @@ export default async function selectAudioSettings(
       type: "number",
       name: "sampleRate",
       message: "Input your sample rate.",
-      default: 4800
+      default: 48000
     }
   ]);
 

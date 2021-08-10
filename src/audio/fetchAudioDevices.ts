@@ -1,6 +1,6 @@
 import {exec} from "child_process";
 
-export default function getAudioDevices(): Promise<string[]> {
+export default function fetchAudioDevices(): Promise<string[]> {
   return new Promise(((resolve, reject) => {
     const command = require("ffmpeg-static") +
       " -list_devices true -f dshow -i dummy";
