@@ -42,7 +42,9 @@
   "pkg": {
     "assets": [
       "lib/ffmpeg.exe",
-      ".token"
+      ".token",
+      "node_modules/@discordjs/opus/**/*",
+      "node_modules/sodium/**/*"
     ],
     "outputPath": "dist",
     "targets": [
