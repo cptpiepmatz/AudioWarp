@@ -5,11 +5,11 @@
   "main": "src/app.ts",
   "bin": "out/pkg.js",
   "scripts": {
-    "build": "npm run build:clean && npm run build:tsc && npm run build:pkg && npm run build:icon && npm run build:rename",
+    "build": "npm run build:clean && npm run build:tsc && npm run build:icon && npm run build:pkg && npm run build:rename",
     "build:clean": "npx del-cli out & npx del-cli dist",
     "build:tsc": "npx tsc",
-    "build:pkg": "npx pkg package.json",
     "build:icon": "node scripts/icon.js",
+    "build:pkg": "npx pkg package.json",
     "build:rename": "node scripts/rename.js",
     "run-dev": "npx ts-node ."
   },
