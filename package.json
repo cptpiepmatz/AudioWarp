@@ -1,7 +1,14 @@
 {
   "name": "audio-warp",
   "version": "1.0.1",
-  "description": "",
+  "description": "A tool to warp your music input to Discord.",
+  "keywords": [
+    "warp",
+    "audio",
+    "radio",
+    "discord",
+    "bot"
+  ],
   "main": "src/app.ts",
   "bin": "out/pkg.js",
   "scripts": {
@@ -14,7 +21,7 @@
     "run-dev": "npx ts-node ."
   },
   "author": "Tim 'Piepmatz' Hesse",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@types/inquirer": "^7.3.3",
     "@types/node": "^16.4.13",
