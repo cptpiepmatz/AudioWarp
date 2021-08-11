@@ -1,4 +1,9 @@
-// This file is used to setup the app in the packaged .exe
+/*
+This file is used to setup the app in the packaged .exe.
+This is needed because the AudioWarp uses ffmpeg for the audio interaction.
+To easily use it, this setup extracts the ffmpeg.exe from the final .exe and
+places it next to it.
+ */
 import {join} from "path";
 import {mkdirSync, readFileSync, writeFileSync} from "fs";
 

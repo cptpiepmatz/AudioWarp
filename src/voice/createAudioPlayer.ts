@@ -2,6 +2,12 @@ import {AudioPlayer, createAudioPlayer, createAudioResource, NoSubscriberBehavio
 import {AudioSettings} from "../audio/selectAudioSettings";
 import createAudioStream from "../audio/createAudioStream";
 
+/**
+ * This creates the audio player that takes the audio stream and does some
+ * music to make it playable for discord.
+ * @param audioSettings Audio settings so that this function can setup the
+ *                      stream itself
+ */
 export default function createRadioPlayer(
   audioSettings: AudioSettings
 ): AudioPlayer & { startStreaming: () => void } {
@@ -12,6 +18,11 @@ export default function createRadioPlayer(
     }
   });
 
+  /**
+   * This function let's the player start with a new audio input stream.
+   * May be used if the old one fails but since it currently works without,
+   * this just stands here.
+   */
   function startStreaming() {
     player.play(createAudioResource(createAudioStream(audioSettings), {
       inputType: StreamType.OggOpus

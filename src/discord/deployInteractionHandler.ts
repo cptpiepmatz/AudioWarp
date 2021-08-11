@@ -1,6 +1,20 @@
 import {Client, Guild, GuildMember, Interaction} from "discord.js";
 import {AudioPlayer, getVoiceConnection, joinVoiceChannel, VoiceConnection} from "@discordjs/voice";
 
+/**
+ * This defines the interaction event handlers.
+ * It listens for the "interactionCreate" event.
+ * If something is off it just returns without any real error.
+ * Since discord expects a reply in the time of 3 seconds the user always gets
+ * some kind of feedback.
+ *
+ * If the "warp here" command is used the bot joins your voice channel, if it
+ * can find it.
+ *
+ * On "leave me" it just leaves.
+ * @param client The client to attach the handlers to
+ * @param player An audio player that the voice connection should subscribe to
+ */
 export default function deployInteractionHandler(
   client: Client,
   player: AudioPlayer

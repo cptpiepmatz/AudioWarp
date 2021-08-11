@@ -1,3 +1,5 @@
+// Main file for the bot, the entry point of the core logic.
+
 import fetchAudioDevices from "./audio/fetchAudioDevices";
 import selectAudioSettings from "./audio/selectAudioSettings";
 import createClient from "./discord/createClient";
@@ -8,14 +10,17 @@ import setCommands from "./discord/setCommands";
 import ora from "ora";
 import chalk from "chalk";
 
+// The spinner used to displaying actions taking some time
 const spinner = ora();
 spinner.color = "magenta";
 spinner.spinner = "dots";
 
+// Some details about this tool, not much
 console.log(`Running ${chalk.magenta("AudioWarp")}, a tool to warp your ` +
   `music input to ${chalk.blue("Discord")}.`);
 
 (async function () {
+  // Here starts the main logic.
   spinner.start("Fetching audio devices...");
   const devices = await fetchAudioDevices();
   spinner.succeed("Fetched audio devices");
