@@ -9,6 +9,9 @@ import deployInteractionHandler from "./discord/deployInteractionHandler";
 import setCommands from "./discord/setCommands";
 import ora from "ora";
 import chalk from "chalk";
+import createRPCClient from "discord-rich-presence";
+
+const rpcClientId = "874344696728678410";
 
 // The spinner used to displaying actions taking some time
 const spinner = ora();
@@ -52,12 +55,24 @@ console.log(`Running ${chalk.magenta("AudioWarp")}, a tool to warp your ` +
   deployInteractionHandler(client, player);
   spinner.succeed("Deployed interaction handlers");
 
+  spinner.start("Setting up RPC...");
+  const rpcClient = createRPCClient(rpcClientId);
+  await rpcClient.updatePresence({
+    details: "Streaming Audio",
+    state: "Input device: " + settings.device,
+    largeImageKey: "icon",
+    largeImageText: "AudioWarp",
+    startTimestamp: new Date()
+  });
+  spinner.succeed("Set up RPC");
+
   spinner.stop();
   spinner.succeed("Booted up");
 
   function terminate() {
     console.log(chalk.red("Shutting down!"));
     client.destroy();
+    rpcClient.disconnect();
     process.exit();
   }
 
