@@ -10,8 +10,8 @@ import {exec} from "child_process";
  */
 export default function fetchAudioDevices(): Promise<string[]> {
   return new Promise(((resolve, reject) => {
-    const command = require("ffmpeg-static") +
-      " -list_devices true -f dshow -i dummy";
+    const command = `"${require("ffmpeg-static")}" ` +
+      "-list_devices true -f dshow -i dummy";
     exec(command, (error, stdout, stderr) => {
       // With this way of executing ffmpeg it will always return non-zero.
       // Therefore this needs to inspect the stderr output.
