@@ -1,6 +1,6 @@
 {
   "name": "audio-warp",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "A tool to warp your music input to Discord.",
   "keywords": [
     "warp",
@@ -46,6 +46,7 @@
     "naudiodon": "^2.3.5",
     "ora": "<6.0.0",
     "prism-media": "^1.3.2",
+    "robotjs": "^0.6.0",
     "sodium": "^3.0.2"
   },
   "pkg": {

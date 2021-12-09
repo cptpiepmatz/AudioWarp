@@ -10,6 +10,8 @@ import setCommands from "./discord/setCommands";
 import ora from "ora";
 import chalk from "chalk";
 import createRPCClient from "discord-rich-presence";
+import selectAntiAFKMeasure from "./discord/selectAntiAFKMeasure";
+import startAntiAFKMeasure from "./discord/startAntiAFKMeasure";
 
 const rpcClientId = "874344696728678410";
 
@@ -29,6 +31,8 @@ console.log(`Running ${chalk.magenta("AudioWarp")}, a tool to warp your ` +
   spinner.succeed("Fetched audio devices");
 
   const settings = await selectAudioSettings(devices);
+
+  const antiAFKMeasure = await selectAntiAFKMeasure();
 
   spinner.start("Creating client...");
   const client = createClient();
@@ -65,6 +69,10 @@ console.log(`Running ${chalk.magenta("AudioWarp")}, a tool to warp your ` +
     startTimestamp: new Date()
   });
   spinner.succeed("Set up RPC");
+
+  spinner.start("Setting up anti AFK measures...");
+  startAntiAFKMeasure(antiAFKMeasure);
+  spinner.succeed("Set up anti AFK measures");
 
   spinner.stop();
   spinner.succeed("Booted up");
