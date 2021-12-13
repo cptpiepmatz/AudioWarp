@@ -14,5 +14,5 @@ export type AntiAFKMeasure = typeof antiAFKMeasures[number];
  */
 export default function startAntiAFKMeasure(antiAFKMeasure: AntiAFKMeasure) {
   if (antiAFKMeasure === antiAFKMeasures[0]) return;
-  setInterval(() => keyTap(antiAFKMeasure), 60 * 1000);
+  return setInterval(() => keyTap(antiAFKMeasure), 60 * 1000);
 }

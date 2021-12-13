@@ -71,7 +71,7 @@ console.log(`Running ${chalk.magenta("AudioWarp")}, a tool to warp your ` +
   spinner.succeed("Set up RPC");
 
   spinner.start("Setting up anti AFK measures...");
-  startAntiAFKMeasure(antiAFKMeasure);
+  let antiAfkTimer = startAntiAFKMeasure(antiAFKMeasure);
   spinner.succeed("Set up anti AFK measures");
 
   spinner.stop();
@@ -81,6 +81,7 @@ console.log(`Running ${chalk.magenta("AudioWarp")}, a tool to warp your ` +
     console.log(chalk.red("Shutting down!"));
     client.destroy();
     rpcClient.disconnect();
+    if (antiAfkTimer) clearInterval(antiAfkTimer);
     process.exit();
   }
 
