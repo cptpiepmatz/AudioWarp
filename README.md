@@ -8,12 +8,26 @@
 
 <br>
 
-![Version](https://img.shields.io/github/package-json/v/cptpiepmatz/AudioWarp?style=for-the-badge&color=FF87FB)
-![Node Version](https://img.shields.io/badge/node-v16-darkgreen?style=for-the-badge)
-![Discord.JS Version](https://img.shields.io/github/package-json/dependency-version/cptpiepmatz/AudioWarp/discord.js?color=5865F2&style=for-the-badge)
-![Operating System](https://img.shields.io/badge/os-windows-blue?style=for-the-badge)
-![FFmpeg Version](https://img.shields.io/badge/ffmpeg-v4.4-orange?style=for-the-badge)
-![pkg Version](https://img.shields.io/github/package-json/dependency-version/cptpiepmatz/AudioWarp/dev/pkg?style=for-the-badge&color=EEEEEE)
+<p align="center">
+  <a href="https://github.com/cptpiepmatz/AudioWarp">
+    <img alt="Version" src="https://img.shields.io/github/package-json/v/cptpiepmatz/AudioWarp?style=for-the-badge&color=FF87FB"/>
+  </a>
+  <a href="https://nodejs.org" target="_blank">
+    <img alt="Node Version" src="https://img.shields.io/badge/node-v16-darkgreen?style=for-the-badge"/>
+  </a>
+  <a href="https://discord.js.org" target="_blank">
+    <img alt="Discord.JS Version" src="https://img.shields.io/github/package-json/dependency-version/cptpiepmatz/AudioWarp/discord.js?color=5865F2&style=for-the-badge"/>
+  </a>
+  <a href="https://lmddgtfy.net/?q=windows" target="_blank">
+    <img alt="Operating System" src="https://img.shields.io/badge/os-windows-blue?style=for-the-badge"/>
+  </a>
+  <a href="https://ffmpeg.org" target="_blank">
+    <img alt="FFmpeg Version" src="https://img.shields.io/badge/ffmpeg-v4.4-orange?style=for-the-badge"/>
+  </a>
+  <a href="https://github.com/vercel/pkg#readme" target="_blank">
+    <img alt="pkg Version" src="https://img.shields.io/github/package-json/dependency-version/cptpiepmatz/AudioWarp/dev/pkg?style=for-the-badge&color=EEEEEE"/>
+  </a>
+</p>
 
 AudioWarp is a [Discord](https://discord.com) bot inspired by the [radio bot example from discord.js](https://github.com/discordjs/voice/tree/main/examples/radio-bot).
 It uses [FFmpeg](https://www.ffmpeg.org) to convert an audio input device into a stream that can be played via a Discord bot.
