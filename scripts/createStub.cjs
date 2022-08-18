@@ -1,7 +1,13 @@
+/**
+ * Compile the stub with go, add the icon to it and then append the separator
+ * text.
+ */
+
 const {copyFile, appendFile} = require("fs/promises");
 const {join} = require("path");
 const {exec} = require("child_process");
 const rcedit = require("rcedit");
+
 (async () => {
   await copyFile(
     join(__dirname, "../node_modules/caxa/stubs/stub.go"),
