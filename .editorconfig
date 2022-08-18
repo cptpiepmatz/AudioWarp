@@ -61,6 +61,7 @@ ij_typescript_spaces_within_union_types = true
 ij_typescript_use_public_modifier = false
 ij_typescript_use_semicolon_after_statement = true
 ij_typescript_wrap_comments = true
+ij_typescript_use_explicit_js_extension = true
 
 [*.json]
 indent_size = 2

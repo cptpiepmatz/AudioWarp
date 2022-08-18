@@ -1,6 +1,13 @@
-import {AudioPlayer, createAudioPlayer, createAudioResource, NoSubscriberBehavior, StreamType} from "@discordjs/voice";
-import {AudioSettings} from "../audio/selectAudioSettings";
-import createAudioStream from "../audio/createAudioStream";
+import {
+  createAudioPlayer,
+  createAudioResource,
+  NoSubscriberBehavior,
+  AudioPlayer,
+  StreamType
+} from "@discordjs/voice";
+
+import {AudioSettings} from "../audio/selectAudioSettings.js";
+import createAudioStream from "../audio/createAudioStream.js";
 
 /**
  * This creates the audio player that takes the audio stream and does some
@@ -19,7 +26,7 @@ export default function createRadioPlayer(
   });
 
   /**
-   * This function let's the player start with a new audio input stream.
+   * This function lets the player start with a new audio input stream.
    * May be used if the old one fails but since it currently works without,
    * this just stands here.
    */

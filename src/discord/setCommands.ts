@@ -1,4 +1,4 @@
-import {Client} from "discord.js";
+import {Client, ApplicationCommandOptionType} from "discord.js";
 
 /**
  * This one defines the commands the bot uses.
@@ -19,7 +19,7 @@ export default function setCommands(client: Client) {
       description: "Warp the bot to you.",
       options: [{
         name: "here",
-        type: "SUB_COMMAND",
+        type: ApplicationCommandOptionType.Subcommand,
         description: "Warp the bot to you."
       }]
     },
@@ -28,7 +28,7 @@ export default function setCommands(client: Client) {
       description: "Let the bot leave.",
       options: [{
         name: "me",
-        type: "SUB_COMMAND",
+        type: ApplicationCommandOptionType.Subcommand,
         description: "Let the bot leave."
       }]
     }

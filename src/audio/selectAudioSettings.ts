@@ -1,4 +1,4 @@
-import {prompt} from "inquirer";
+import inquirer from "inquirer";
 
 /** Interface for the audio settings. */
 export interface AudioSettings {
@@ -20,7 +20,7 @@ export default async function selectAudioSettings(
     device: string,
     channelAmount: "mono" | "stereo",
     sampleRate: number
-  } = await prompt([
+  } = await inquirer.prompt([
     {
       type: "list",
       name: "device",

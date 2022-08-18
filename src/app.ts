@@ -1,17 +1,19 @@
 // Main file for the bot, the entry point of the core logic.
 
-import fetchAudioDevices from "./audio/fetchAudioDevices";
-import selectAudioSettings from "./audio/selectAudioSettings";
-import createClient from "./discord/createClient";
-import readToken from "./discord/readToken";
-import createRadioPlayer from "./voice/createAudioPlayer";
-import deployInteractionHandler from "./discord/deployInteractionHandler";
-import setCommands from "./discord/setCommands";
-import ora from "ora";
 import chalk from "chalk";
 import createRPCClient from "discord-rich-presence";
-import selectAntiAFKMeasure from "./discord/selectAntiAFKMeasure";
-import startAntiAFKMeasure from "./discord/startAntiAFKMeasure";
+import ora from "ora";
+
+import fetchAudioDevices from "./audio/fetchAudioDevices.js";
+import selectAudioSettings from "./audio/selectAudioSettings.js";
+import selectAntiAFKMeasure from "./discord/selectAntiAFKMeasure.js";
+import createClient from "./discord/createClient.js";
+import readToken from "./discord/readToken.js";
+import setCommands from "./discord/setCommands.js";
+import deployInteractionHandler from "./discord/deployInteractionHandler.js";
+import startAntiAFKMeasure from "./discord/startAntiAFKMeasure.js";
+import createRadioPlayer from "./voice/createAudioPlayer.js";
+
 
 const rpcClientId = "874344696728678410";
 

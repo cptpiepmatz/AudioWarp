@@ -1,5 +1,10 @@
-import {Client, Guild, GuildMember, Interaction} from "discord.js";
-import {AudioPlayer, getVoiceConnection, joinVoiceChannel, VoiceConnection} from "@discordjs/voice";
+import {
+  getVoiceConnection,
+  joinVoiceChannel,
+  VoiceConnection,
+  AudioPlayer
+} from "@discordjs/voice";
+import {Client, Guild, Interaction, GuildMember} from "discord.js";
 
 /**
  * This defines the interaction event handlers.

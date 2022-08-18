@@ -1,11 +1,12 @@
-import {prompt} from "inquirer";
-import {AntiAFKMeasure, antiAFKMeasures} from "./startAntiAFKMeasure";
+import inquirer from "inquirer";
+
+import {antiAFKMeasures, AntiAFKMeasure} from "./startAntiAFKMeasure.js";
 
 /**
  * Function to select which anti afk measure to use.
  */
 export default async function selectAntiAFKMeasure(): Promise<AntiAFKMeasure> {
-  const {measure} = await prompt([
+  const {measure} = await inquirer.prompt([
     {
       type: "list",
       name: "measure",

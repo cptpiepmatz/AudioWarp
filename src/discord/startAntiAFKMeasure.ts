@@ -1,5 +1,6 @@
 /** Possible anti afk measures. */
-import {keyTap} from "robotjs";
+
+import robotjs from "robotjs";
 
 /** Possible anti afk measure keys. */
 export const antiAFKMeasures = ["none", "alt", "control", "esc"];
@@ -14,5 +15,5 @@ export type AntiAFKMeasure = typeof antiAFKMeasures[number];
  */
 export default function startAntiAFKMeasure(antiAFKMeasure: AntiAFKMeasure) {
   if (antiAFKMeasure === antiAFKMeasures[0]) return;
-  return setInterval(() => keyTap(antiAFKMeasure), 60 * 1000);
+  return setInterval(() => robotjs.keyTap(antiAFKMeasure), 60 * 1000);
 }
