@@ -14,6 +14,7 @@ import deployInteractionHandler from "./discord/deployInteractionHandler.js";
 import startAntiAFKMeasure from "./discord/startAntiAFKMeasure.js";
 import createRadioPlayer from "./voice/createAudioPlayer.js";
 
+setTerminalTitle("AudioWarp");
 
 const rpcClientId = "874344696728678410";
 
@@ -62,15 +63,21 @@ console.log(`Running ${chalk.magenta("AudioWarp")}, a tool to warp your ` +
   spinner.succeed("Deployed interaction handlers");
 
   spinner.start("Setting up RPC...");
-  const rpcClient = createRPCClient(rpcClientId);
-  await rpcClient.updatePresence({
-    details: "Streaming Audio",
-    state: "Input device: " + settings.device,
-    largeImageKey: "icon",
-    largeImageText: "AudioWarp",
-    startTimestamp: new Date()
-  });
-  spinner.succeed("Set up RPC");
+  let rpcClient: ReturnType<typeof createRPCClient>;
+  try {
+    rpcClient = createRPCClient(rpcClientId);
+    await rpcClient.updatePresence({
+      details: "Streaming Audio",
+      state: "Input device: " + settings.device,
+      largeImageKey: "icon",
+      largeImageText: "AudioWarp",
+      startTimestamp: new Date()
+    });
+    spinner.succeed("Set up RPC");
+  }
+  catch (e: any) {
+    spinner.fail("RPC Setup failed: " + e.message);
+  }
 
   spinner.start("Setting up anti AFK measures...");
   let antiAfkTimer = startAntiAFKMeasure(antiAFKMeasure);
@@ -82,7 +89,7 @@ console.log(`Running ${chalk.magenta("AudioWarp")}, a tool to warp your ` +
   function terminate() {
     console.log(chalk.red("Shutting down!"));
     client.destroy();
-    rpcClient.disconnect();
+    rpcClient?.disconnect();
     if (antiAfkTimer) clearInterval(antiAfkTimer);
     process.exit();
   }
@@ -90,3 +97,9 @@ console.log(`Running ${chalk.magenta("AudioWarp")}, a tool to warp your ` +
   process.on("SIGINT", terminate);
   process.on("SIGHUP", terminate);
 })();
+
+function setTerminalTitle(title: string) {
+  process.stdout.write(
+    String.fromCharCode(27) + "]0;" + title + String.fromCharCode(7)
+  );
+}

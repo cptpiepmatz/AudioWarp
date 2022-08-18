@@ -1,6 +1,6 @@
 /*
 This is being used to rename the file that pkg creates.
-It renames it to use "AudioWarp" as it's name and concats the version from the
+It renames it to use "AudioWarp" as it's name and concat the version from the
 package.json and the current short commit hash as build data.
 This should conform the semantic versioning.
  */
