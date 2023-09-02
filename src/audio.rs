@@ -118,7 +118,7 @@ pub struct CpalMediaSource {
 }
 
 impl CpalMediaSource {
-    const DATA_QUEUE_SIZE: usize = 5 * 1024;
+    const DATA_QUEUE_SIZE: usize = 8 * 1024 * 1024;
 
     pub fn from_device<T>(
         device: &Device,
