@@ -2,6 +2,7 @@ use std::cmp::Ordering;
 use std::fmt::{Debug, Display, Formatter, Write};
 use std::io;
 use std::io::{ErrorKind, Read, Seek, SeekFrom};
+use std::ops::Deref;
 use std::sync::Arc;
 
 use cpal::traits::{DeviceTrait, HostTrait};
@@ -117,6 +118,8 @@ pub struct CpalMediaSource {
 }
 
 impl CpalMediaSource {
+    const DATA_QUEUE_SIZE: usize = 5 * 1024;
+
     pub fn from_device<T>(
         device: &Device,
         stream_config: &StreamConfig
@@ -131,7 +134,7 @@ impl CpalMediaSource {
             channels => return Err(BuildStreamError::StreamConfigNotSupported)
         };
 
-        let data_consumer = Arc::new(ArrayQueue::new(1024));
+        let data_consumer = Arc::new(ArrayQueue::new(Self::DATA_QUEUE_SIZE));
         let data_producer = data_consumer.clone();
         let error = Arc::new(AtomicCell::new(None));
         let callback_error = error.clone();
@@ -143,8 +146,7 @@ impl CpalMediaSource {
                     // songbird needs data to be encoded directly as opus, raw i16 or raw f32
                     let sample: f32 = date.to_sample();
                     for byte in sample.to_ne_bytes() {
-                        // TODO: if necessary, handle this more elegantly
-                        let _ = data_producer.push(byte);
+                        data_producer.force_push(byte);
                     }
                 }
             },
