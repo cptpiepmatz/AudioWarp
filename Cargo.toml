@@ -17,6 +17,9 @@ crossbeam = "0.8"
 anyhow = "1"
 lazy_static = "1"
 
+# async runtime
+tokio = { version = "1", features = ["full"] }
+
 # discord via twilight
 twilight-gateway = "0.15"
 twilight-http = "0.15"
