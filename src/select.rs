@@ -150,7 +150,8 @@ pub async fn select_channel_to_join(
     let voice_channels = channels
         .into_iter()
         .filter(|c| c.kind == ChannelType::GuildVoice);
-    let channels_with_names: Vec<_> = voice_channels.filter(|c| c.name.is_some()).collect();
+    let mut channels_with_names: Vec<_> = voice_channels.filter(|c| c.name.is_some()).collect();
+    channels_with_names.sort_by(|a, b| a.position.cmp(&b.position));
     let channel_names: Vec<_> = channels_with_names
         .iter()
         .map(|c| c.name.as_ref().expect("filtered").to_string())
