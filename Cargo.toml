@@ -17,8 +17,9 @@ crossbeam = "0.8"
 anyhow = "1"
 lazy_static = "1"
 
-# async runtime
+# async runtime handling
 tokio = { version = "1", features = ["full"] }
+async-trait = "0.1"
 
 # discord via twilight
 twilight-gateway = "0.15"
@@ -27,8 +28,11 @@ twilight-model = "0.15"
 
 # audio handling
 cpal = "0.15"
+symphonia = "0.5"
 
 [dependencies.songbird]
 version = "0.3"
 default-features = false
-features = ["twilight-rustls", "driver", "zlib-stock"]
+git = "https://github.com/serenity-rs/songbird.git"
+rev = "efe2a0b6d5d0e01685334c0cac05bb4bbbf0c32d"
+features = ["driver", "gateway", "twilight", "rustls"]
