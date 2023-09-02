@@ -9,8 +9,11 @@ use cpal::{BufferSize, ChannelCount, Device, StreamConfig};
 use dialoguer::theme::{ColorfulTheme, Theme};
 use dialoguer::Select;
 use lazy_static::lazy_static;
+use twilight_model::channel::{Channel, ChannelType};
+use twilight_model::guild::Guild;
 
 use crate::audio::{InputDeviceListItem, SampleRate};
+use crate::AppContext;
 
 lazy_static! {
     static ref THEME: ColorfulTheme = ColorfulTheme::default();
@@ -84,4 +87,53 @@ pub fn select_stream_config(selected_input_device: &Device) -> anyhow::Result<St
         sample_rate,
         buffer_size: BufferSize::Default
     })
+}
+
+pub async fn select_channel_to_join(
+    guilds: Vec<Guild>,
+    ctx: &AppContext
+) -> anyhow::Result<Option<(Guild, Channel)>> {
+    let theme = THEME.deref();
+
+    let guild_names: Vec<_> = iter::once("No Guild")
+        .chain(guilds.iter().map(|g| g.name.as_str()))
+        .collect();
+    let selected_guild = Select::with_theme(theme)
+        .with_prompt("Select Guild to warp to")
+        .items(&guild_names)
+        .default(0)
+        .interact()?;
+    let selected_guild = match selected_guild {
+        0 => return Ok(None),
+        i => guilds
+            .into_iter()
+            .nth(i - 1)
+            .expect("index is from this vec")
+    };
+
+    let channels = ctx
+        .http
+        .guild_channels(selected_guild.id)
+        .await?
+        .models()
+        .await?;
+    let voice_channels = channels
+        .into_iter()
+        .filter(|c| c.kind == ChannelType::GuildVoice);
+    let channels_with_names: Vec<_> = voice_channels.filter(|c| c.name.is_some()).collect();
+    let channel_names: Vec<_> = channels_with_names
+        .iter()
+        .map(|c| c.name.as_ref().expect("filtered").to_string())
+        .collect();
+    let selected_channel = Select::with_theme(theme)
+        .with_prompt("Select Channel to warp to")
+        .items(&channel_names)
+        .default(0)
+        .interact()?;
+    let selected_channel = channels_with_names
+        .into_iter()
+        .nth(selected_channel)
+        .expect("index is from this vec");
+
+    Ok(Some((selected_guild, selected_channel)))
 }
