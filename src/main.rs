@@ -26,6 +26,7 @@ use crate::audio::CpalMediaSource;
 type Terminal = RataTerminal<CrosstermBackend<Stdout>>;
 
 mod audio;
+mod discord;
 mod select;
 mod ui;
 
