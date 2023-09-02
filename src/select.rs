@@ -1,3 +1,6 @@
+use std::borrow::Cow;
+use std::collections::HashSet;
+use std::iter;
 use std::ops::Deref;
 
 use console::Term;
@@ -41,75 +44,44 @@ pub fn select_input_device(
 pub fn select_stream_config(selected_input_device: &Device) -> anyhow::Result<StreamConfig> {
     let theme = THEME.deref();
 
-    let max_supported_channels = selected_input_device
-        .supported_input_configs()?
-        .map(|range| range.channels())
-        .max()
-        .ok_or(anyhow::Error::msg("no channels available"))?;
-
-    let is_stereo = match max_supported_channels {
-        0 => unimplemented!("no channels are unreasonable"),
-        1 => false,
+    let input_configs: Vec<_> = selected_input_device.supported_input_configs()?.filter(|range| range.channels() <= 2).collect();
+    let selected_config = match input_configs.len() {
+        0 => return Err(anyhow::Error::msg("no supported input config found that is compatible with AudioWarp")),
+        1 => input_configs.into_iter().next().expect("not empty"),
         _ => {
-            Select::with_theme(theme)
-                .with_prompt("Select Audio Channels")
-                .items(&["stereo", "mono"])
-                .default(0)
-                .interact()? ==
-                0
+            let input_config_channels: Vec<_> = input_configs.iter().map(|range| match range.channels() {
+                0 => unimplemented!(),
+                1 => Cow::Borrowed("mono"),
+                2 => Cow::Borrowed("stereo"),
+                c => Cow::Owned(c.to_string())
+            }).collect();
+            let mut select = Select::with_theme(theme);
+            select.with_prompt("Select Channel Count").items(input_config_channels.as_slice());
+            input_configs.iter().enumerate().find(|(_, range)| range.channels() == 2).map(|(i, _)| i).iter().for_each(|i| { select.default(*i);});
+            let index = select.interact()?;
+
+            input_configs.into_iter().nth(index).expect("index is from this vec")
         }
     };
-    let channel_count = match is_stereo {
-        true => 2,
-        false => 1
-    };
 
-    dbg!(is_stereo);
-
-    let min_sample_rate = selected_input_device
-        .supported_input_configs()?
-        .filter(|range| range.channels() >= channel_count)
-        .map(|range| range.min_sample_rate())
-        .min()
-        .ok_or(anyhow::Error::msg(
-            "no available supported config remaining"
-        ))?;
-    let max_sample_rate = selected_input_device
-        .supported_input_configs()?
-        .filter(|range| range.channels() >= channel_count)
-        .map(|range| range.max_sample_rate())
-        .max()
-        .expect("if a minimum config is available, a max is as well");
-
-    let valid_opus_sample_rates: Vec<_> = [
-        SampleRate::new(48_000),
-        SampleRate::new(24_000),
-        SampleRate::new(16_000),
-        SampleRate::new(12_000),
-        SampleRate::new(8_000)
-    ]
-    .into_iter()
-    .filter(|rate| rate <= &min_sample_rate && rate >= &max_sample_rate)
-    .collect();
-
-    let sample_rate = match valid_opus_sample_rates.len() {
-        0 => return Err(anyhow::Error::msg("no fitting sample rate found")),
-        1 => valid_opus_sample_rates[0],
-        _ => {
-            valid_opus_sample_rates[Select::with_theme(theme)
-                .with_prompt("Select Sample Rate")
-                .items(&valid_opus_sample_rates)
-                .default(0)
-                .interact()?]
+    let max_sample_rate = selected_config.max_sample_rate();
+    let min_sample_rate = selected_config.min_sample_rate();
+    let sample_rate = match max_sample_rate == min_sample_rate {
+        true => max_sample_rate,
+        false => {
+            let rates: Vec<_> = [("max", max_sample_rate), ("min", min_sample_rate)].iter().map(|(name, rate)| format!("{} {}", name, SampleRate::from(*rate))).collect();
+            let index = Select::with_theme(theme).with_prompt("Select Sample Rate").items(rates.as_slice()).default(0).interact()?;
+            match index {
+                0 => max_sample_rate,
+                1 => min_sample_rate,
+                _ => unreachable!()
+            }
         }
     };
 
     Ok(StreamConfig {
-        channels: match is_stereo {
-            true => 2,
-            false => 1
-        },
-        sample_rate: sample_rate.into(),
+        channels: selected_config.channels(),
+        sample_rate,
         buffer_size: BufferSize::Default
     })
 }
