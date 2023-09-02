@@ -68,7 +68,7 @@ pub fn list_input_devices() -> anyhow::Result<Vec<InputDeviceListItem>> {
     Ok(devices)
 }
 
-#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 pub struct SampleRate(u32);
 
 impl SampleRate {
@@ -80,6 +80,12 @@ impl SampleRate {
 impl From<SampleRate> for cpal::SampleRate {
     fn from(value: SampleRate) -> Self {
         cpal::SampleRate(value.0)
+    }
+}
+
+impl From<cpal::SampleRate> for SampleRate {
+    fn from(value: cpal::SampleRate) -> Self {
+        SampleRate(value.0)
     }
 }
 
