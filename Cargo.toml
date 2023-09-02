@@ -1,8 +1,31 @@
 [package]
-name = "audio-warp"
-version = "0.1.0"
+name = "AudioWarp"
+version = "2.0.0-wip"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+# terminal output
+ratatui = "0.22"
+crossterm = "0.27"
+console = "0.15"
+dialoguer = { version = "0.10", default-features = false }
+
+# multi-threading util
+crossbeam = "0.8"
+
+# general util
+anyhow = "1"
+lazy_static = "1"
+
+# discord via twilight
+twilight-gateway = "0.15"
+twilight-http = "0.15"
+twilight-model = "0.15"
+
+# audio handling
+cpal = "0.15"
+
+[dependencies.songbird]
+version = "0.3"
+default-features = false
+features = ["twilight-rustls", "driver", "zlib-stock"]
