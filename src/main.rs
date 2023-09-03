@@ -4,32 +4,21 @@ use std::borrow::Cow;
 use std::env::VarError;
 use std::io::Stdout;
 use std::ops::Deref;
-use std::sync::{Arc, Mutex};
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
-use std::{env, io, thread};
+use std::sync::Arc;
+use std::env;
 use std::collections::HashMap;
 use std::future::IntoFuture;
-use songbird::join::Join;
-
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-use cpal::SampleFormat;
-use crossterm::event::{Event, KeyCode};
-use crossterm::terminal::{
-    disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen
-};
-use crossterm::{event, execute};
 use ratatui::prelude::CrosstermBackend;
-use ratatui::widgets::Paragraph;
 use ratatui::Terminal as RataTerminal;
 use songbird::shards::TwilightMap;
-use songbird::{Call, Songbird};
+use songbird::Songbird;
 use songbird::driver::Bitrate;
-use tokio::runtime::Runtime;
 use twilight_gateway::{ConfigBuilder, Event as TwilightGatewayEvent, Shard};
 use twilight_http::Client as HttpClient;
 use twilight_model::gateway::{Intents, ShardId};
 use twilight_model::gateway::payload::outgoing::update_presence::UpdatePresencePayload;
-use twilight_model::gateway::presence::{Activity, ActivityEmoji, ActivityType, Status};
+use twilight_model::gateway::presence::{Activity, ActivityType, Status};
 
 use crate::audio::CpalMediaSource;
 
@@ -180,35 +169,4 @@ async fn handle_event(event: TwilightGatewayEvent, ctx: Arc<AppContext>) {
 pub struct AppContext {
     pub http: HttpClient,
     pub songbird: Songbird
-}
-
-fn setup_terminal() -> anyhow::Result<Terminal> {
-    let mut stdout = io::stdout();
-    enable_raw_mode()?;
-    execute!(stdout, EnterAlternateScreen)?;
-    Ok(Terminal::new(CrosstermBackend::new(stdout))?)
-}
-
-fn restore_terminal(terminal: &mut Terminal) -> anyhow::Result<()> {
-    disable_raw_mode()?;
-    execute!(terminal.backend_mut(), LeaveAlternateScreen)?;
-    Ok(terminal.show_cursor()?)
-}
-
-fn run(terminal: &mut Terminal) -> anyhow::Result<()> {
-    loop {
-        terminal.draw(|frame| {
-            let greeting = Paragraph::new("Hello World");
-            frame.render_widget(greeting, frame.size());
-        })?;
-        if event::poll(Duration::from_millis(250))? {
-            if let Event::Key(key) = event::read()? {
-                if KeyCode::Char('q') == key.code {
-                    break;
-                }
-            }
-        }
-    }
-
-    Ok(())
 }
