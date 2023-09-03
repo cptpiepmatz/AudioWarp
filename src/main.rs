@@ -133,6 +133,7 @@ async fn main() -> anyhow::Result<()> {
             let mut call = call.lock().await;
             call.deafen(true).await.unwrap();
             call.set_bitrate(Bitrate::Max);
+            // TODO: this consumes the media source, which is impractical
             let input = media_source.into_input();
             call.play_only_input(input);
         });

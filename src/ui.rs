@@ -11,6 +11,7 @@ use crate::audio::InputDeviceListItem;
 use crate::{AppContext, Terminal};
 
 /// UI-loop for the select menu.
+#[deprecated]
 pub fn run_select(
     terminal: &mut Terminal,
     ctx: &AppContext,
