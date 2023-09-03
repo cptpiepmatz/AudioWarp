@@ -116,6 +116,7 @@ impl PartialOrd<cpal::SampleRate> for SampleRate {
 pub struct CpalMediaSource {
     data: Arc<ArrayQueue<u8>>,
     error: Arc<AtomicCell<Option<StreamError>>>,
+    sample_rate: u32,
     channel_count: u32
 }
 
@@ -154,14 +155,17 @@ impl CpalMediaSource {
             CpalMediaSource {
                 data: data_consumer,
                 error,
+                sample_rate: stream_config.sample_rate.0,
                 channel_count: stream_config.channels as u32
             },
             input_stream
         ))
     }
 
-    pub fn into_lazy_input(self) -> Input {
-        Input::Lazy(Box::new(self.clone()))
+    pub fn into_input(self) -> Input {
+        let sample_rate = self.sample_rate;
+        let channel_count = self.channel_count;
+        RawAdapter::new(self, sample_rate, channel_count).into()
     }
 }
 
@@ -205,24 +209,5 @@ impl MediaSource for CpalMediaSource {
 
     fn byte_len(&self) -> Option<u64> {
         Some(self.data.len() as u64)
-    }
-}
-
-#[async_trait]
-impl Compose for CpalMediaSource {
-    fn create(&mut self) -> Result<AudioStream<Box<dyn MediaSource>>, AudioStreamError> {
-        Ok(AudioStream {
-            input: Box::new(self.clone()),
-            hint: None,
-        })
-    }
-
-    async fn create_async(&mut self) -> Result<AudioStream<Box<dyn MediaSource>>, AudioStreamError> {
-        // since `should_create_async` returns `false` this shouldn't get called
-        unimplemented!()
-    }
-
-    fn should_create_async(&self) -> bool {
-        false
     }
 }
