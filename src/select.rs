@@ -49,7 +49,6 @@ pub fn select_stream_config(selected_input_device: &Device) -> anyhow::Result<St
 
     let input_configs: Vec<_> = selected_input_device
         .supported_input_configs()?
-        .filter(|range| range.channels() <= 2)
         .collect();
     let selected_config = match input_configs.len() {
         0 => {
@@ -59,13 +58,13 @@ pub fn select_stream_config(selected_input_device: &Device) -> anyhow::Result<St
         }
         1 => input_configs.into_iter().next().expect("not empty"),
         _ => {
-            let input_config_channels: Vec<_> = input_configs
+            let input_config_channels: Vec<Cow<_>> = input_configs
                 .iter()
                 .map(|range| match range.channels() {
                     0 => unimplemented!(),
-                    1 => "mono",
-                    2 => "stereo",
-                    _ => unreachable!("filtered previously")
+                    1 => "mono".into(),
+                    2 => "stereo".into(),
+                    c => format!("{c} channels").into()
                 })
                 .collect();
             let mut select = Select::with_theme(theme);
