@@ -14,7 +14,7 @@ use ratatui::Terminal as RataTerminal;
 use songbird::shards::TwilightMap;
 use songbird::Songbird;
 use songbird::driver::Bitrate;
-use twilight_gateway::{ConfigBuilder, Event as TwilightGatewayEvent, Shard};
+use twilight_gateway::{ConfigBuilder, Shard};
 use twilight_http::Client as HttpClient;
 use twilight_model::gateway::{Intents, ShardId};
 use twilight_model::gateway::payload::outgoing::update_presence::UpdatePresencePayload;
@@ -122,8 +122,7 @@ async fn main() -> anyhow::Result<()> {
             let mut call = call.lock().await;
             call.deafen(true).await.unwrap();
             call.set_bitrate(Bitrate::Max);
-            // TODO: this consumes the media source, which is impractical
-            let input = media_source.into_input();
+            let input = media_source.clone().into_input();
             call.play_only_input(input);
         });
     }
@@ -139,34 +138,15 @@ async fn main() -> anyhow::Result<()> {
 
         ctx.songbird.process(&event).await;
 
-        tokio::spawn(handle_event(event, ctx.clone()));
+        tokio::spawn(discord::handle_event(event, ctx.clone()));
     }
 
     Ok(())
 }
 
-async fn handle_event(event: TwilightGatewayEvent, ctx: Arc<AppContext>) {
-    use TwilightGatewayEvent as E;
-    match event {
-        E::GuildDelete(_) => {
-            // TODO: disconnect from that voice, if connected
-        }
-        E::GuildUpdate(_) => {
-            // TODO: update ui indicator
-        }
-        E::VoiceStateUpdate(_) => {
-            // TODO: update ui indicator and songbird connection
-        }
-        E::InteractionCreate(_) => {
-            // TODO: listen to commands
-        }
-
-        _ => ()
-    }
-}
-
 // is public to allow 'ui::run_select' to be public
 pub struct AppContext {
     pub http: HttpClient,
+    // TODO: make a wrapper around Songbird to prevent having multiple Call instances
     pub songbird: Songbird
 }
