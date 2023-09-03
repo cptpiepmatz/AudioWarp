@@ -5,6 +5,8 @@ use crossterm::event::{Event, KeyCode};
 use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
 use std::io;
 use ratatui::backend::CrosstermBackend;
+use crossterm::terminal::EnterAlternateScreen;
+use crossterm::terminal::LeaveAlternateScreen;
 use crate::Terminal;
 
 fn setup_terminal() -> anyhow::Result<Terminal> {
