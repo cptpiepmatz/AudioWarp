@@ -112,8 +112,16 @@ impl PartialOrd<cpal::SampleRate> for SampleRate {
     }
 }
 
+/// Media Source that receives data via [cpal].
+///
+/// # Cloning
+/// Every clone of this media source shares a reference to the [ArrayQueue] that is producing
+/// the data.
+/// Therefore would two instances of this try to pull data from the same queue.
+/// Make sure you read only from one media source at a time to avoid audio issues.
 #[derive(Clone)]
 pub struct CpalMediaSource {
+    // TODO: make this a Mutex to check that only reader actually reads
     data: Arc<ArrayQueue<u8>>,
     error: Arc<AtomicCell<Option<StreamError>>>,
     sample_rate: u32,
@@ -182,6 +190,7 @@ impl Read for CpalMediaSource {
             None => ()
         }
 
+        // TODO: make this a Mutex::try_lock and return an error when reading would fail
         for (i, byte_ref) in buf.iter_mut().enumerate() {
             match (self.data.pop(), i) {
                 (None, 0) => return Err(io::ErrorKind::WouldBlock.into()),
