@@ -9,6 +9,7 @@ use dialoguer::theme::ColorfulTheme;
 use dialoguer::{Input, Select};
 use lazy_static::lazy_static;
 use songbird::driver::Bitrate;
+use static_toml::static_toml;
 use twilight_model::channel::{Channel, ChannelType};
 use twilight_model::guild::Guild;
 
@@ -19,13 +20,17 @@ lazy_static! {
     static ref THEME: ColorfulTheme = ColorfulTheme::default();
 }
 
+static_toml! {
+    static MESSAGES = include_toml!("messages.toml");
+}
+
 pub fn select_input_device(
     from_devices: Vec<InputDeviceListItem>
 ) -> anyhow::Result<(Device, String)> {
     let theme = THEME.deref();
 
     let mut select = Select::with_theme(theme);
-    select.with_prompt("Select Audio Device");
+    select.with_prompt(MESSAGES.select.audio_device);
     select.items(from_devices.as_slice());
     if let Some(default_index) = from_devices
         .iter()
@@ -67,7 +72,7 @@ pub fn select_stream_config(selected_input_device: &Device) -> anyhow::Result<St
                 .collect();
             let mut select = Select::with_theme(theme);
             select
-                .with_prompt("Select Channel Count")
+                .with_prompt(MESSAGES.select.channel_count)
                 .items(input_config_channels.as_slice());
             input_configs
                 .iter()
@@ -97,7 +102,7 @@ pub fn select_stream_config(selected_input_device: &Device) -> anyhow::Result<St
                 .map(|(name, rate)| format!("{} {}", name, SampleRate::from(*rate)))
                 .collect();
             let index = Select::with_theme(theme)
-                .with_prompt("Select Sample Rate")
+                .with_prompt(MESSAGES.select.sample_rate)
                 .items(rates.as_slice())
                 .default(0)
                 .interact()?;
@@ -122,7 +127,7 @@ pub fn select_bitrate() -> anyhow::Result<Bitrate> {
     let select = Select::with_theme(theme)
         .items(&["max", "default", "auto", "custom"])
         .default(0)
-        .with_prompt("Select output bitrate")
+        .with_prompt(MESSAGES.select.bitrate)
         .interact()?;
     let bitrate = match select {
         0 => Bitrate::Max,
@@ -130,7 +135,7 @@ pub fn select_bitrate() -> anyhow::Result<Bitrate> {
         2 => Bitrate::Auto,
         3 => {
             let input = Input::with_theme(theme)
-                .with_prompt("Set your bitrate in bits/s")
+                .with_prompt(MESSAGES.select.bitrate_custom)
                 .validate_with(|s: &String| i32::from_str(s).map(|_| ()))
                 .interact()?;
             let input = i32::from_str(&input).expect("checked by validator");
@@ -152,7 +157,7 @@ pub async fn select_channel_to_join(
         .chain(guilds.iter().map(|g| g.name.as_str()))
         .collect();
     let selected_guild = Select::with_theme(theme)
-        .with_prompt("Select Guild to warp to")
+        .with_prompt(MESSAGES.select.guild)
         .items(&guild_names)
         .default(0)
         .interact()?;
@@ -180,7 +185,7 @@ pub async fn select_channel_to_join(
         .map(|c| c.name.as_ref().expect("filtered").to_string())
         .collect();
     let selected_channel = Select::with_theme(theme)
-        .with_prompt("Select Channel to warp to")
+        .with_prompt(MESSAGES.select.channel)
         .items(&channel_names)
         .default(0)
         .interact()?;

@@ -16,6 +16,7 @@ crossbeam = "0.8"
 # general util
 anyhow = "1"
 lazy_static = "1"
+static-toml = "1"
 
 # async runtime handling
 tokio = { version = "1", features = ["full"] }

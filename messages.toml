@@ -1,0 +1,8 @@
+[select]
+audio-device = "Select Audio Device"
+channel-count = "Select Channel Count"
+sample-rate = "Select Sample Rate"
+bitrate = "Select Output Bitrate"
+bitrate-custom = "Set Your Bitrate in Bits/s"
+guild = "Select Guild to Warp to"
+channel = "Select Channel to Warp to"
