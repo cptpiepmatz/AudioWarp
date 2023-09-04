@@ -25,9 +25,9 @@ use crate::audio::CpalMediaSource;
 type Terminal = RataTerminal<CrosstermBackend<Stdout>>;
 
 mod audio;
-mod discord;
 mod select;
 mod ui;
+mod event;
 
 /// The maximum amount for when the client should request guild names.
 const INIT_GUILD_REQ_THRESHOLD: usize = 10;
@@ -88,7 +88,7 @@ async fn main() -> anyhow::Result<()> {
     let http = HttpClient::new(token.to_string());
     let user_id = http.current_user().await?.model().await?.id;
 
-    let ready = discord::wait_for_ready(&mut shard).await?;
+    let ready = event::wait_for_ready(&mut shard).await?;
     let guild_count = ready.guilds.len();
 
     let init_guilds = match guild_count {
