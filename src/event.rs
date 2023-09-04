@@ -17,21 +17,25 @@ pub async fn wait_for_ready(shard: &mut Shard) -> Result<Ready, ReceiveMessageEr
     }
 }
 
-pub async fn handle_event(event: TwilightGatewayEvent, ctx: impl AsRef<AppContext>) {
+pub async fn handle_event(event: TwilightGatewayEvent, ctx: impl AsRef<AppContext>) -> anyhow::Result<()> {
     let ctx = ctx.as_ref();
 
     use twilight_model::gateway::event::Event as E;
     match event {
-        E::GuildDelete(event) => handle_guild_delete(event, ctx).await,
+        E::GuildDelete(event) => handle_guild_delete(event, ctx).await?,
         E::GuildUpdate(event) => handle_guild_update(*event, ctx).await,
         E::VoiceStateUpdate(event) => handle_voice_state_update(*event, ctx).await,
         E::InteractionCreate(event) => handle_interaction_create(*event, ctx).await,
         _ => ()
     }
+
+    Ok(())
 }
 
-async fn handle_guild_delete(event: GuildDelete, ctx: &AppContext) {
-    // TODO: disconnect from that voice, if connected
+async fn handle_guild_delete(event: GuildDelete, ctx: &AppContext) -> anyhow::Result<()> {
+    let guild_id = event.id;
+    ctx.songbird.remove(guild_id).await?;
+    Ok(())
 }
 
 async fn handle_guild_update(event: GuildUpdate, ctx: &AppContext) {
