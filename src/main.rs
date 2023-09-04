@@ -1,13 +1,14 @@
 #![allow(non_snake_case)]
 
 use std::borrow::Cow;
+use std::cell::OnceCell;
 use std::collections::HashMap;
 use std::env;
 use std::env::VarError;
 use std::future::IntoFuture;
 use std::io::Stdout;
 use std::ops::Deref;
-use std::sync::Arc;
+use std::sync::{Arc, OnceLock};
 
 use audio::CpalMediaSource;
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
@@ -23,6 +24,10 @@ use twilight_http::Client as HttpClient;
 use twilight_model::gateway::payload::outgoing::update_presence::UpdatePresencePayload;
 use twilight_model::gateway::presence::{Activity, ActivityType, Status};
 use twilight_model::gateway::{Intents, ShardId};
+use twilight_model::id::marker::GuildMarker;
+use twilight_model::id::Id;
+
+use crate::util::SongbirdUtil;
 
 type Terminal = RataTerminal<CrosstermBackend<Stdout>>;
 
@@ -34,6 +39,8 @@ mod util;
 
 /// The maximum amount for when the client should request guild names.
 const INIT_GUILD_REQ_THRESHOLD: usize = 10;
+
+static BITRATE: OnceLock<Bitrate> = OnceLock::new();
 
 // TODO: make this infallible
 #[tokio::main]
@@ -56,6 +63,10 @@ async fn main() -> anyhow::Result<()> {
     let (media_source, stream) =
         // TODO: this is static, maybe in the future this needs to be dynamic
         CpalMediaSource::from_device::<f32>(&input_device, &stream_config)?;
+
+    BITRATE
+        .set(select::select_bitrate()?)
+        .expect("only one thread sets here");
 
     let activity: Activity = Activity {
         application_id: None,
@@ -124,7 +135,7 @@ async fn main() -> anyhow::Result<()> {
             let call = ctx.songbird.join(guild.id, channel.id).await.unwrap();
             let mut call = call.lock().await;
             call.deafen(true).await.unwrap();
-            call.set_bitrate(Bitrate::Max);
+            call.set_bitrate(*BITRATE.get().expect("is set"));
             let input = media_source.clone().into_input();
             call.play_only_input(input);
         });
