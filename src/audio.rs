@@ -3,7 +3,7 @@ use std::fmt::{Debug, Display, Formatter, Write};
 use std::io;
 use std::io::{ErrorKind, Read, Seek, SeekFrom};
 use std::ops::Deref;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 use async_trait::async_trait;
 
 use cpal::traits::{DeviceTrait, HostTrait};
@@ -121,7 +121,6 @@ impl PartialOrd<cpal::SampleRate> for SampleRate {
 /// Make sure you read only from one media source at a time to avoid audio issues.
 #[derive(Clone)]
 pub struct CpalMediaSource {
-    // TODO: make this a Mutex to check that only reader actually reads
     data: Arc<ArrayQueue<u8>>,
     error: Arc<AtomicCell<Option<StreamError>>>,
     sample_rate: u32,
@@ -190,7 +189,8 @@ impl Read for CpalMediaSource {
             None => ()
         }
 
-        // TODO: make this a Mutex::try_lock and return an error when reading would fail
+        // to keep performance as high as possible, this will just use the queue without any checks
+        // other components need to make sure that not two reads happen at the same time
         for (i, byte_ref) in buf.iter_mut().enumerate() {
             match (self.data.pop(), i) {
                 (None, 0) => return Err(io::ErrorKind::WouldBlock.into()),
@@ -205,8 +205,8 @@ impl Read for CpalMediaSource {
 
 impl Seek for CpalMediaSource {
     fn seek(&mut self, _: SeekFrom) -> io::Result<u64> {
-        // The source does not provide seekability but the trait `MediaSource` requires
-        // this
+        // The source does not provide seekability but the trait
+        // `MediaSource` requires this
         unimplemented!()
     }
 }
