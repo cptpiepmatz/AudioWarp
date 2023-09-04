@@ -1,12 +1,14 @@
 use std::borrow::Cow;
 use std::iter;
 use std::ops::Deref;
+use std::str::FromStr;
 
 use cpal::traits::DeviceTrait;
 use cpal::{BufferSize, Device, StreamConfig};
 use dialoguer::theme::ColorfulTheme;
-use dialoguer::Select;
+use dialoguer::{Input, Select};
 use lazy_static::lazy_static;
+use songbird::driver::Bitrate;
 use twilight_model::channel::{Channel, ChannelType};
 use twilight_model::guild::Guild;
 
@@ -112,6 +114,32 @@ pub fn select_stream_config(selected_input_device: &Device) -> anyhow::Result<St
         sample_rate,
         buffer_size: BufferSize::Default
     })
+}
+
+pub fn select_bitrate() -> anyhow::Result<Bitrate> {
+    let theme = THEME.deref();
+
+    let select = Select::with_theme(theme)
+        .items(&["max", "default", "auto", "custom"])
+        .default(0)
+        .with_prompt("Select output bitrate")
+        .interact()?;
+    let bitrate = match select {
+        0 => Bitrate::Max,
+        1 => Bitrate::BitsPerSecond(128_000),
+        2 => Bitrate::Auto,
+        3 => {
+            let input = Input::with_theme(theme)
+                .with_prompt("Set your bitrate in bits/s")
+                .validate_with(|s: &String| i32::from_str(s).map(|_| ()))
+                .interact()?;
+            let input = i32::from_str(&input).expect("checked by validator");
+            Bitrate::BitsPerSecond(input)
+        }
+        _ => unreachable!("list only has 4 elements")
+    };
+
+    Ok(bitrate)
 }
 
 pub async fn select_channel_to_join(
