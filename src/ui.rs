@@ -1,12 +1,14 @@
-use ratatui::widgets::Paragraph;
-use crossterm::{event, execute};
-use std::time::Duration;
-use crossterm::event::{Event, KeyCode};
-use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
 use std::io;
+use std::time::Duration;
+
+use crossterm::event::{Event, KeyCode};
+use crossterm::terminal::{
+    disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen
+};
+use crossterm::{event, execute};
 use ratatui::backend::CrosstermBackend;
-use crossterm::terminal::EnterAlternateScreen;
-use crossterm::terminal::LeaveAlternateScreen;
+use ratatui::widgets::Paragraph;
+
 use crate::Terminal;
 
 fn setup_terminal() -> anyhow::Result<Terminal> {

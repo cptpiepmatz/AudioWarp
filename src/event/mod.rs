@@ -1,8 +1,12 @@
+use std::sync::Arc;
+
 use twilight_gateway::error::ReceiveMessageError;
 use twilight_gateway::Shard;
 use twilight_model::gateway::event::{Event, Event as TwilightGatewayEvent};
-use twilight_model::gateway::payload::incoming::{GuildDelete, GuildUpdate, InteractionCreate, Ready, VoiceStateUpdate};
-use std::sync::Arc;
+use twilight_model::gateway::payload::incoming::{
+    GuildDelete, GuildUpdate, InteractionCreate, Ready, VoiceStateUpdate
+};
+
 use crate::AppContext;
 
 pub async fn wait_for_ready(shard: &mut Shard) -> Result<Ready, ReceiveMessageError> {

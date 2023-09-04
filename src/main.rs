@@ -1,33 +1,33 @@
 #![allow(non_snake_case)]
 
 use std::borrow::Cow;
+use std::collections::HashMap;
+use std::env;
 use std::env::VarError;
+use std::future::IntoFuture;
 use std::io::Stdout;
 use std::ops::Deref;
 use std::sync::Arc;
-use std::env;
-use std::collections::HashMap;
-use std::future::IntoFuture;
+
+use audio::CpalMediaSource;
 use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use ratatui::prelude::CrosstermBackend;
 use ratatui::Terminal as RataTerminal;
+use songbird::driver::Bitrate;
 use songbird::shards::TwilightMap;
 use songbird::Songbird;
-use songbird::driver::Bitrate;
 use twilight_gateway::{ConfigBuilder, Shard};
 use twilight_http::Client as HttpClient;
-use twilight_model::gateway::{Intents, ShardId};
 use twilight_model::gateway::payload::outgoing::update_presence::UpdatePresencePayload;
 use twilight_model::gateway::presence::{Activity, ActivityType, Status};
-
-use crate::audio::CpalMediaSource;
+use twilight_model::gateway::{Intents, ShardId};
 
 type Terminal = RataTerminal<CrosstermBackend<Stdout>>;
 
 mod audio;
+mod event;
 mod select;
 mod ui;
-mod event;
 
 /// The maximum amount for when the client should request guild names.
 const INIT_GUILD_REQ_THRESHOLD: usize = 10;
@@ -35,7 +35,6 @@ const INIT_GUILD_REQ_THRESHOLD: usize = 10;
 // TODO: make this infallible
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-
     let token: Cow<str> = match (env::var("TOKEN"), env!("INCLUDED_TOKEN")) {
         (Ok(token), "") if token.as_str() == "" => panic!("empty token"),
         (Ok(token), _) => token.into(),
@@ -71,19 +70,20 @@ async fn main() -> anyhow::Result<()> {
         secrets: None,
         state: String::from("✨ Warping 𝐀𝐮𝐝𝐢𝐨").into(),
         timestamps: None,
-        url: None,
+        url: None
     };
 
     let mut shard = Shard::with_config(
         ShardId::ONE,
-        ConfigBuilder::new(token.to_string(), Intents::GUILD_VOICE_STATES).presence(UpdatePresencePayload {
-            activities: vec![activity],
-            afk: false,
-            since: None,
-            status: Status::Online,
-        }).build()
+        ConfigBuilder::new(token.to_string(), Intents::GUILD_VOICE_STATES)
+            .presence(UpdatePresencePayload {
+                activities: vec![activity],
+                afk: false,
+                since: None,
+                status: Status::Online
+            })
+            .build()
     );
-
 
     let http = HttpClient::new(token.to_string());
     let user_id = http.current_user().await?.model().await?.id;
@@ -133,12 +133,12 @@ async fn main() -> anyhow::Result<()> {
         let event = match shard.next_event().await {
             Ok(event) => event,
             Err(source) if source.is_fatal() => break,
-            Err(_) => continue,
+            Err(_) => continue
         };
 
         ctx.songbird.process(&event).await;
 
-        tokio::spawn(discord::handle_event(event, ctx.clone()));
+        tokio::spawn(event::handle_event(event, ctx.clone()));
     }
 
     Ok(())

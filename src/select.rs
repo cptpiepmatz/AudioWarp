@@ -1,12 +1,10 @@
 use std::borrow::Cow;
-use std::collections::HashSet;
 use std::iter;
 use std::ops::Deref;
 
-use console::Term;
 use cpal::traits::DeviceTrait;
-use cpal::{BufferSize, ChannelCount, Device, StreamConfig};
-use dialoguer::theme::{ColorfulTheme, Theme};
+use cpal::{BufferSize, Device, StreamConfig};
+use dialoguer::theme::ColorfulTheme;
 use dialoguer::Select;
 use lazy_static::lazy_static;
 use twilight_model::channel::{Channel, ChannelType};
@@ -47,9 +45,7 @@ pub fn select_input_device(
 pub fn select_stream_config(selected_input_device: &Device) -> anyhow::Result<StreamConfig> {
     let theme = THEME.deref();
 
-    let input_configs: Vec<_> = selected_input_device
-        .supported_input_configs()?
-        .collect();
+    let input_configs: Vec<_> = selected_input_device.supported_input_configs()?.collect();
     let selected_config = match input_configs.len() {
         0 => {
             return Err(anyhow::Error::msg(
