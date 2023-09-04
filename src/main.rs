@@ -131,7 +131,7 @@ async fn main() -> anyhow::Result<()> {
     if let Some((guild, channel)) = selected_to_join {
         let ctx = ctx.clone();
         tokio::spawn(async move {
-            // usually we check if we have only one call, but here it has to be empty
+            ctx.songbird.clear_calls(guild.id).await.unwrap();
             let call = ctx.songbird.join(guild.id, channel.id).await.unwrap();
             let mut call = call.lock().await;
             call.deafen(true).await.unwrap();
