@@ -50,9 +50,9 @@ pub fn list_input_devices() -> anyhow::Result<Vec<InputDeviceListItem>> {
     let host = default_host();
     let input_devices = host.input_devices()?;
     let Some(default_input_device) = host.default_input_device()
-    else {
-        return Ok(Vec::new());
-    };
+        else {
+            return Ok(Vec::new());
+        };
     let default_input_device_name = default_input_device.name()?;
 
     let size_hint = input_devices.size_hint();
@@ -134,9 +134,9 @@ impl CpalMediaSource {
         device: &Device,
         stream_config: &StreamConfig
     ) -> Result<(Self, Stream), BuildStreamError>
-    where
-        T: SizedSample,
-        f32: FromSample<T>
+        where
+            T: SizedSample,
+            f32: FromSample<T>
     {
         let data_consumer = Arc::new(ArrayQueue::new(Self::DATA_QUEUE_SIZE));
         let data_producer = data_consumer.clone();
