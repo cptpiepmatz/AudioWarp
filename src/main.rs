@@ -21,6 +21,7 @@ use twilight_http::Client as HttpClient;
 use twilight_model::gateway::payload::outgoing::update_presence::UpdatePresencePayload;
 use twilight_model::gateway::presence::{Activity, ActivityType, Status};
 use twilight_model::gateway::{Intents, ShardId};
+use context::AppContext;
 
 type Terminal = RataTerminal<CrosstermBackend<Stdout>>;
 
@@ -28,6 +29,7 @@ mod audio;
 mod event;
 mod select;
 mod ui;
+mod context;
 
 /// The maximum amount for when the client should request guild names.
 const INIT_GUILD_REQ_THRESHOLD: usize = 10;
@@ -142,11 +144,4 @@ async fn main() -> anyhow::Result<()> {
     }
 
     Ok(())
-}
-
-// is public to allow 'ui::run_select' to be public
-pub struct AppContext {
-    pub http: HttpClient,
-    // TODO: make a wrapper around Songbird to prevent having multiple Call instances
-    pub songbird: Songbird
 }

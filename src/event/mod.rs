@@ -5,7 +5,7 @@ use twilight_model::gateway::payload::incoming::{
     GuildDelete, GuildUpdate, InteractionCreate, Ready, VoiceStateUpdate
 };
 
-use crate::AppContext;
+use crate::context::AppContext;
 
 pub async fn wait_for_ready(shard: &mut Shard) -> Result<Ready, ReceiveMessageError> {
     loop {
