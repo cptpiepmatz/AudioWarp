@@ -14,14 +14,15 @@ use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
 use ratatui::prelude::CrosstermBackend;
 use ratatui::Terminal as RataTerminal;
 use songbird::driver::Bitrate;
+use songbird::input::Input;
 use songbird::shards::TwilightMap;
-use songbird::Songbird;
+use songbird::{Call, Songbird};
+use tokio::sync::Mutex as TokioMutex;
 use twilight_gateway::{ConfigBuilder, Shard};
 use twilight_http::Client as HttpClient;
 use twilight_model::gateway::payload::outgoing::update_presence::UpdatePresencePayload;
 use twilight_model::gateway::presence::{Activity, ActivityType, Status};
 use twilight_model::gateway::{Intents, ShardId};
-use context::AppContext;
 
 type Terminal = RataTerminal<CrosstermBackend<Stdout>>;
 
@@ -29,7 +30,7 @@ mod audio;
 mod event;
 mod select;
 mod ui;
-mod context;
+mod util;
 
 /// The maximum amount for when the client should request guild names.
 const INIT_GUILD_REQ_THRESHOLD: usize = 10;
@@ -144,4 +145,9 @@ async fn main() -> anyhow::Result<()> {
     }
 
     Ok(())
+}
+
+pub struct AppContext {
+    pub http: HttpClient,
+    pub songbird: Songbird
 }

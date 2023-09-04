@@ -11,7 +11,7 @@ use twilight_model::channel::{Channel, ChannelType};
 use twilight_model::guild::Guild;
 
 use crate::audio::{InputDeviceListItem, SampleRate};
-use crate::context::AppContext;
+use crate::AppContext;
 
 lazy_static! {
     static ref THEME: ColorfulTheme = ColorfulTheme::default();
